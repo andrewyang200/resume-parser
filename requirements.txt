@@ -1,0 +1,15 @@
+openai>=1.68.2  # Use a recent version supporting JSON mode
+python-dotenv>=1.0.0
+PyPDF2>=3.0.0
+python-docx>=1.1.0
+
+python-docx>=1.1.0
+psycopg2-binary>=2.9.0  # PostgreSQL driver (use psycopg2-binary for easy install)
+# psycopg>=3.1        # newer features/async support if preferred
+pydantic>=2.10.6         # For data validation
+
+sentence-transformers>=3.4.0  # For embeddings
+torch>=2.0.0                 # Or tensorflow/jax if preferred backend for sentence-transformers
+pgvector>=0.4.0              # Python client for pgvector helper types (optional but nice)
+# Add numpy if not automatically installed as a dependency
+numpy>=1.20.0

@@ -1,0 +1,118 @@
+{
+  "schema_version": "1.0",
+  "parsing_metadata": {
+    "model_used": "gpt-4o-mini",
+    "timestamp_utc": "2025-03-26T18:19:21+00:00",
+    "processing_time_seconds": 36.52
+  },
+  "contact_information": {
+    "name": "ANDREW YANG",
+    "email": "andrewyang@princeton.edu",
+    "phone": "(424) 299-9872",
+    "location": "Princeton, NJ",
+    "linkedin_url": "linkedin.com/in/andrewyang04",
+    "portfolio_url": null,
+    "github_url": null,
+    "other_url": null
+  },
+  "summary": null,
+  "work_experience": [
+    {
+      "company": "Andlinger Center for Energy and the Environment",
+      "title": "Data Science Intern",
+      "location": "Princeton, NJ",
+      "start_date": "2024-06",
+      "end_date": "2024-08",
+      "duration": null,
+      "description": "Designed a critical path algorithm to model the optimal sequencing pathway for assets in energy transition models. Modeled the complex network of various sectors in the pipeline of sustainable energy transition to showcase cross sector dependencies, optimize infrastructure development and accelerate the decarbonization process."
+    },
+    {
+      "company": "International School Services",
+      "title": "Investment Analyst",
+      "location": "Princeton, NJ",
+      "start_date": "2023-12",
+      "end_date": "2024-01",
+      "duration": null,
+      "description": "Created 268 equity and 101 fixed income allocations comprised of the S&P 500, Nasdaq-100, MSCI World, MSCI EM, Bloomberg Aggregate, and BofA High Yield indices to determine a benchmark for ISS’s future investment strategies. Reduced allocations to 12 for equity and 11 for fixed income, optimizing for returns gained per unit increase of volatility. Presented findings and recommended a 55-45 equity to fixed income investment benchmark to ISS board directors and fund managers, projecting a 7.47% annualized return, 9.76% annualized volatility, and -30.64% max drawdown."
+    },
+    {
+      "company": "Qatar Computing Research Institute",
+      "title": "Machine Learning Intern",
+      "location": "Doha, Qatar",
+      "start_date": "2023-06",
+      "end_date": "2023-08",
+      "duration": null,
+      "description": "Oversaw the transition of Sat2Graph—a deep learning model that extracts road graphs from satellite imagery—from TensorFlow to PyTorch to reduce technical debt and better align with the team's updated framework preferences. Reviewed existing codebases and integrated in-line comments to streamline team onboarding and improve code readability. Optimized model architecture and refined network hyperparameters, resulting in a 24.6% overall reduction in testing loss. Identified and rectified critical bugs in custom DataLoader, leading to improved data augmentation and a 10.5% reduction in loss during respective training steps for datasets pertaining to non-metropolitan regions."
+    },
+    {
+      "company": "Annex Capital Partners",
+      "title": "Investment Analyst",
+      "location": "Princeton, NJ",
+      "start_date": "2023-09",
+      "end_date": "Present",
+      "duration": null,
+      "description": "Analyze company statements, management, and industry trends to identify investment opportunities for a $90k l/s fund. Craft detailed presentations, modeled business structures, and created valuation models for investment pitch sessions."
+    },
+    {
+      "company": "Business Today",
+      "title": "Logistics and Events Staffer",
+      "location": "Princeton, NJ",
+      "start_date": "2023-09",
+      "end_date": "2024-02",
+      "duration": null,
+      "description": "Manage a $600k budget overseeing food, accommodations, and event planning for BT’s 49th International Conference. Communicated cross-functionally across 5 subteams (Marketing, Media, Content, Student & Executive Relations) to ensure cohesive integration of logistical operations and strategies for 150+ conference attendees and c-suite executives."
+    },
+    {
+      "company": "Princeton University Computer Science",
+      "title": "Undergraduate Course Assistant",
+      "location": "Princeton, NJ",
+      "start_date": "2023-09",
+      "end_date": "2023-12",
+      "duration": null,
+      "description": "Mentored 13 students in COS 126, enhancing student understanding and proficiency in fundamental Java and CS concepts. Collaborated with precept instructor biweekly to review course material and assist with in-class programming exercises."
+    }
+  ],
+  "education": [
+    {
+      "institution": "Princeton University",
+      "degree": "B.S.E.",
+      "field_of_study": "Operations Research and Financial Engineering",
+      "location": "Princeton, NJ",
+      "start_date": null,
+      "end_date": "2026-05",
+      "graduation_date": "2026-05",
+      "description": "Minor in Computer Science. Relevant Coursework: Financial Investments, Probability and Stochastic Systems, Fundamentals of Statistics, Optimization, Introduction to Financial Mathematics, Algorithms and Data Structures, Regression and Applied Time Series."
+    },
+    {
+      "institution": "Mira Costa High School",
+      "degree": null,
+      "field_of_study": null,
+      "location": "Manhattan Beach, CA",
+      "start_date": null,
+      "end_date": "2022-06",
+      "graduation_date": "2022-06",
+      "description": "GPA: 4.00. ACT Composite: 34. Honors: Gold Presidential Service Award, AP Scholar with Distinction, California Scholarship Federation Lifetime Member."
+    }
+  ],
+  "skills": {
+    "technical": [
+      "Microsoft Office Suite",
+      "Java",
+      "Python",
+      "Data Management",
+      "Quantitative Analysis",
+      "Basic Accounting"
+    ],
+    "soft": [],
+    "languages": [
+      "Mandarin"
+    ],
+    "certifications": [],
+    "other": []
+  },
+  "projects": [],
+  "awards_and_recognition": [],
+  "publications": [],
+  "volunteer_experience": [],
+  "raw_text_preview": "A\nNDREW\nY\nANG\nandrewyang@princeton.edu\n|\n(424)\n299-9872\n|\nlinkedin.com/in/andrewyang04\nE\nDUCATION\nPrinceton\nUniversity\n|\nPrinceton,\nNJ\n|\nGPA:\n3.8\nExpected\nMay\n2026 \nB.S.E.\nin\nOperations\nResearch\nand\nFinancial\nEngineering;\nMinor\nin\nComputer\nScience \nRelevant\nCoursework:\nFinancial\nInvestments,\nProbability\nand\nStochastic\nSystems,\nFundamentals\nof\nStatistics,\nOptimization, \nIntroduction\nto\nFinancial\nMathematics,\nAlgorithms\nand\nData\nStructures,\nRegression\nand\nApplied\nTime\nSeries\nMira\nCosta\nHigh\nSchool..."
+}

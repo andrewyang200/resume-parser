@@ -1,0 +1,132 @@
+{
+  "schema_version": "1.0",
+  "parsing_metadata": {
+    "model_used": "gpt-4o-mini",
+    "timestamp_utc": "2025-03-27T05:01:53+00:00",
+    "processing_time_seconds": 21.1
+  },
+  "contact_information": {
+    "name": "Ryan Lee",
+    "email": "rlee51@u.rochester.edu",
+    "phone": "(310)-874-5772",
+    "location": "Rochester, NY",
+    "linkedin_url": "linkedin.com/in/rlee51",
+    "portfolio_url": null,
+    "github_url": "github.com/rlee603166",
+    "other_url": null
+  },
+  "summary": null,
+  "work_experience": [
+    {
+      "company": "UR Medicine Motion Laboratories",
+      "title": "Data Science Intern",
+      "location": "Rochester, NY",
+      "start_date": "2025-01",
+      "end_date": "Present",
+      "duration": null,
+      "description": "Designed and deployed a PostgreSQL relational database to store and manage patient motion capture data. Developed a normalized schema to track patients, sessions, and cohort-specific activity data. Implemented multithreaded ETL pipelines to ingest, preprocess, and store high-frequency motion data directly from laboratory equipment."
+    },
+    {
+      "company": "Rochester Human-Computer Interaction Lab",
+      "title": "AI Research Assistant",
+      "location": "Rochester, NY",
+      "start_date": "2024-09",
+      "end_date": "2024-12",
+      "duration": null,
+      "description": "Architected a relational database for capturing and analyzing feedback from healthcare professionals (SQLite). Developed a feedback visualization system integrating LLM insights with interactive gauges and real-time conversational data analysis (JavaScript). Streamlined the deployment pipeline for a LLM on AWS EC2, reducing deployment time by 50%. Contributed to the development of SOPHIE, a virtual AI agent designed to help physicians practice complex conversations with terminally ill patients."
+    },
+    {
+      "company": "Logical Position",
+      "title": "Software Engineer Intern",
+      "location": "Lake Oswego, OR",
+      "start_date": "2024-06",
+      "end_date": "2024-08",
+      "duration": null,
+      "description": "Implemented analytic tools, for a leading digital marketing agency, used to optimize over $1.5 billion in ad spend. Developed an internal web application with a Flask middleware server, enabling employees to access over 2 million client data points and streamline API communication with Databricks (HTML/CSS, ReactJS). Engineered a collection of automated data pipelines, optimized for distributed data processing, to feed a new blended reporting product. (PySpark, SQL, Databricks). Built unit tests to ensure the consistency of all data pipelines."
+    }
+  ],
+  "education": [
+    {
+      "institution": "University of Rochester",
+      "degree": "Bachelor of Science",
+      "field_of_study": "Computer Science",
+      "location": "Rochester, NY",
+      "start_date": null,
+      "end_date": "2026-05",
+      "graduation_date": "2026-05",
+      "description": "Bachelor of Arts in Mathematics. Coursework: Machine Learning, Computer Networks, Computer Organization, IOS Mobile App Development, Artificial Intelligence, Computation and Formal Systems, Object-Oriented Programming (Java), Linear Algebra."
+    }
+  ],
+  "skills": {
+    "technical": [
+      "C/C++",
+      "Java",
+      "Python",
+      "Rust",
+      "JavaScript",
+      "HTML/CSS",
+      "Assembly language",
+      "SQL",
+      "R",
+      "AWS",
+      "Apache Spark",
+      "Tensorflow",
+      "PyTorch",
+      "Scikkit-learn",
+      "React",
+      "SwiftUI",
+      "UiKit",
+      "Git",
+      "Azure",
+      "Postman",
+      "Databricks",
+      "Pandas",
+      "NumPy",
+      "Matplotlib",
+      "OpenCV"
+    ],
+    "soft": [
+      "team player"
+    ],
+    "languages": [],
+    "certifications": [],
+    "other": [
+      "machine learning",
+      "data manipulation",
+      "data pipelining",
+      "cloud computing"
+    ]
+  },
+  "projects": [
+    {
+      "name": "Orchestra",
+      "description": "Designed a distributed LLM training cluster across 10 NVIDIA GPUs in a school lab over wifi. Developed a Flask and FastAPI architecture with a controller node (REST APIs: /start, /status) and compute nodes (/train, /stats), leveraging PyTorch for Deepseek r1 fine-tuning (8B parameters). Created a visualization with a Chart.js for real-time loss/accuracy visualization and gpu utilization stats.",
+      "technologies_used": [
+        "PyTorch",
+        "Flask",
+        "Chart.js",
+        "PyTorch DDP",
+        "CUDA"
+      ],
+      "url": "github",
+      "associated_experience": "personal"
+    },
+    {
+      "name": "Rory Rater",
+      "description": "Built a full-stack app enabling users to compare golf swings with Rory McIlroy using Movenet’s pose detection. Integrated a Flask-based real-time pose analysis service and a Spring Boot for a RESTful API backend. Developed a React & Three.js frontend with interactive 3D visualization and precise video playback for swing analysis.",
+      "technologies_used": [
+        "React",
+        "Three.js",
+        "Flask",
+        "Spring Boot",
+        "TensorFlow"
+      ],
+      "url": "github,website",
+      "associated_experience": "personal"
+    }
+  ],
+  "awards_and_recognition": [],
+  "publications": [],
+  "volunteer_experience": [],
+  "raw_text_preview": "Ryan Lee\n(310)-874-5772 |rlee51@u.rochester.edu |linkedin.com/in/rlee51 |github.com/rlee603166\nEducation\nUniversity of Rochester Rochester, NY\nBachelor of Science in Computer Science, Expected May 2026\nBachelor of Arts in Mathematics\nCoursework: Machine Learning, Computer Networks, Computer Organization, IOS Mobile App Development, Artificial\nIntelligence, Computation and Formal Systems, Object-Oriented Programming (Java), Linear Algebra\nExperience\nData Science Intern Jan 2025 - Present\nUR Medic..."
+}
