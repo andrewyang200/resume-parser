@@ -1,4 +1,4 @@
-# src/query_processor.py (Updated schema definition and system prompt)
+# src/query_processor.py (Enhanced for Professional Networking Platform)
 # ----- START OF COMPLETE UPDATED CODE BLOCK -----
 
 import os
@@ -10,9 +10,9 @@ from typing import Optional, Tuple
 
 try:
     # Import the updated models from src/models.py
-    from .models import StructuredQuery, QueryFilters
+    from .models import StructuredQuery, QueryFilters, ProfessionalConceptExpansions, ConfidenceMetrics
 except ImportError:
-    from models import StructuredQuery, QueryFilters
+    from models import StructuredQuery, QueryFilters, ProfessionalConceptExpansions, ConfidenceMetrics
 
 try:
     from dotenv import load_dotenv
@@ -26,36 +26,60 @@ except ImportError as e:
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - [%(filename)s:%(lineno)d] - %(message)s')
 
 # --- Constants ---
+# USE THE BEST AVAILABLE MODEL FOR THIS TASK
 DEFAULT_QUERY_MODEL = "gpt-4o"
 MAX_RETRIES = 3
 RETRY_DELAY_SECONDS = 5
 
-# --- UPDATED SCHEMA DEFINITION (with role_seniority) ---
+# --- ENHANCED SCHEMA DEFINITION ---
 QUERY_SCHEMA_DEFINITION = """
 {
-  "semantic_query": "string | null (Core conceptual meaning for vector search. E.g., 'experience scaling SaaS startup', 'mobile UX design fintech', 'career advice finance to tech transition')",
+  "original_query": "string (The original user query, verbatim)",
+  "semantic_query": "string | null (Core conceptual meaning, extracted or slightly refined)",
+  "refined_semantic_query": "string | null (Optional: A more concrete rephrasing likely to match resume text)",
   "filters": {
-    "location": ["string"] | null (Cities, states, countries, 'local'),
-    "company_name": ["string"] | null (Company names),
-    "job_title": ["string"] | null (Job titles),
-    "industry": ["string"] | null (e.g., 'fintech', 'healthcare AI', 'SaaS'),
-    "skills": ["string"] | null (Specific skills mentioned),
-    "role_seniority": ["string"] | null (Seniority levels like 'senior', 'VP', 'junior', 'lead'),
+    "location": ["string"] | null,
+    "company_name": ["string"] | null,
+    "job_title": ["string"] | null,
+    "industry": ["string"] | null,
+    "skills": ["string"] | null,
+    "role_seniority": ["string"] | null (e.g., 'senior', 'VP', 'junior'),
     "min_experience_years": integer | null,
     "max_experience_years": integer | null,
-    "keywords": ["string"] | null (Use for concepts not in other filters: scaling factors, project types like 'enterprise', transition elements like 'finance'/'tech' when switching, specific technologies mentioned loosely, etc.),
+    "keywords": ["string"] | null,
     "currently_working_at": "string | null",
     "previously_worked_at": "string | null",
     "founded_company": boolean | null,
     "open_to_consulting": boolean | null,
-    "network_relation": "string | null (e.g., 'my_network', 'alumni_network')"
+    "network_relation": "string | null",
+    "career_stage": ["string"] | null,
+    "project_types": ["string"] | null,
+    "educational_background": ["string"] | null,
+    "interests": ["string"] | null,
+    "availability": "string | null"
   },
-  "query_type": "string | null (Intent: 'seeking_expertise', 'exploring_paths', 'company_search', 'role_search', 'networking', 'collaboration', 'other')"
+  "expanded_keywords": ["string"] | null,
+  "professional_concept_expansions": {
+    "skills": ["string"] | null,
+    "roles": ["string"] | null,
+    "industries": ["string"] | null,
+    "company_types": ["string"] | null,
+    "technologies": ["string"] | null,
+    "achievements": ["string"] | null,
+    "certifications": ["string"] | null
+  },
+  "implicit_needs": ["string"] | null,
+  "query_type": "string | null",
+  "confidence": {
+    "overall": float | null,
+    "ambiguity_level": string | null,
+    "ambiguity_reason": string | null
+  }
 }
 """
 # --- End of Schema Update ---
 
-# --- Helper Functions --- (load_openai_key remains the same)
+# --- Helper Functions ---
 def load_openai_key() -> Optional[str]:
     load_dotenv(); api_key = os.getenv("OPENAI_API_KEY")
     if not api_key: logging.error("OpenAI API key not found in .env"); return None
@@ -66,37 +90,93 @@ def process_query(
     client: OpenAI,
     model: str = DEFAULT_QUERY_MODEL
 ) -> Optional[StructuredQuery]:
-    """ Processes query using LLM, validates against Pydantic models. """
+    """ Uses LLM for advanced query understanding, expansion, and refinement. """
     logging.info(f"Processing query using model {model}: '{user_query}'")
     start_time = time.time()
 
-    # --- UPDATED SYSTEM PROMPT ---
+    # --- ENHANCED SYSTEM PROMPT ---
     system_prompt = f"""
-        You are an intelligent assistant analyzing user queries for a professional networking platform.
-        Convert the user's query into a structured JSON object according to the schema below.
+        You are an expert professional profile search system for a cutting-edge networking platform (similar to LinkedIn + Perplexity). Your task is to accurately parse natural language queries about professional connections and convert them into structured JSON for precise profile matching.
 
-        **Instructions:**
-        1.  **Semantic Core (`semantic_query`):** Extract the central theme/concept for vector search. Focus on the *what* and *why*.
-        2.  **Filters (`filters`):** Extract specific constraints using the exact `snake_case` keys provided. Use `null` or omit keys if not present.
-            *   **Use `keywords` flexibly:** Place concepts here if they don't fit specific filters. Examples: scaling factors ("scaled team 10 to 50"), project types ("enterprise projects"), technologies mentioned generally, named methodologies ("Agile").
-            *   **Career Transitions:** If the query is about switching careers (e.g., "moving from X to Y"), extract both X and Y and put them into the `keywords` list.
-            *   **Seniority:** Extract terms like "senior", "junior", "VP", "lead", "principal" into the `role_seniority` list.
-            *   Interpret context: "used to work at Google" -> `previously_worked_at: "Google"`. "founder" -> `founded_company: true`.
-        3.  **Query Type (`query_type`):** Classify the user's likely intent.
-        4.  **Output Format:** Return ONLY the valid JSON object matching the schema. Use `snake_case` keys exactly. Adhere strictly to types.
+        ### YOUR CORE MISSION
+        Transform any professional networking query into a structured representation that will match the RIGHT profiles, even when skills, experiences, or needs are implicitly stated. ACCURACY IS CRITICAL - users will see "no results found" if your parsing misses important concepts or fails to expand properly.
+
+        ### QUERY UNDERSTANDING WORKFLOW
+
+        1. **CORE UNDERSTANDING**
+           - Preserve the original query verbatim
+           - Extract the primary search intent
+           - If the query is vague, create a concrete refinement using resume-like language
+
+        2. **EXTRACT EXPLICIT ATTRIBUTES**
+           - Identify all concrete filters (company names, titles, years of experience, etc.)
+           - Map qualitative terms to quantitative when possible (e.g., "senior" -> 5+ years)
+           - Detect temporal qualifiers ("currently", "previously", "used to")
+
+        3. **PROFESSIONAL CONTEXT ENRICHMENT (MOST IMPORTANT)**
+           - For EVERY key concept, generate comprehensive professional expansions:
+             * If user mentions "startup experience" → include "entrepreneurship", "early-stage company", "founder", "co-founder", "seed funding", "product-market fit", "MVP development"
+             * If user mentions "healthcare technology" → include "health tech", "medical devices", "patient data", "HIPAA compliance", "electronic health records", "telehealth"
+             * If user mentions "growth marketing" → include "user acquisition", "retention strategies", "conversion optimization", "CAC", "LTV", "viral loops", "referral programs"
+
+           - Expand abbreviations and industry jargon:
+             * "PM" → "Product Manager", "Project Manager", "Program Manager"
+             * "ML" → "Machine Learning", "Deep Learning", "AI", "Neural Networks", "Data Science"
+             * "UI/UX" → "User Interface", "User Experience", "Design Thinking", "Wireframing", "Prototyping", "Usability Testing"
+
+           - Generate synonyms and variations for roles and skills:
+             * "Software Engineer" → "Developer", "Programmer", "SWE", "Coder", "Software Developer"
+             * "Marketing" → "Growth", "Digital Marketing", "Content Strategy", "Brand Development"
+
+           - Map abstract concepts to concrete implementations:
+             * "Analytics expertise" → "SQL", "Tableau", "Power BI", "Data Visualization", "Looker", "Data Analysis"
+             * "Cloud experience" → "AWS", "Azure", "GCP", "Cloud Architecture", "Serverless", "Kubernetes"
+
+        4. **IMPLICIT NEED DETECTION**
+           - Identify unstated but implied requirements
+           - Infer career stages relevant to the query
+           - Detect mentorship/guidance needs
+
+        5. **AMBIGUITY HANDLING**
+           - Assess confidence in your interpretation
+           - Identify potential ambiguous terms (like "PM" or "design")
+           - When ambiguous, expand ALL possible interpretations
+
+        ### PROFESSIONAL CATEGORY EXPANSIONS (CRITICAL)
+
+        **ALWAYS expand categories into specific examples:**
+
+        - **Tech Companies:** FAANG → "Facebook/Meta", "Apple", "Amazon", "Netflix", "Google"; Include others like "Microsoft", "Twitter/X", "LinkedIn", "Salesforce", "Adobe", "Oracle"
+          
+        - **Industries:** Fintech → "Digital Banking", "Payment Processing", "Lending Platforms", "Wealth Management", "Blockchain", "Cryptocurrency", "InsurTech"
+
+        - **Technical Domains:** AI/ML → "Natural Language Processing", "Computer Vision", "Predictive Analytics", "Recommendation Systems", "Reinforcement Learning", "LLMs", "Transformers"
+
+        - **Job Functions:** Marketing → "Content Marketing", "SEO", "Social Media", "Email Marketing", "Brand Strategy", "Performance Marketing", "Marketing Analytics"
+
+        - **Funding Stages:** Early Stage → "Pre-seed", "Seed", "Series A"; Late Stage → "Series B", "Series C", "Series D", "Pre-IPO"
+
+        **WHEN IN DOUBT, EXPAND MORE BROADLY** - It's better to capture more potentially relevant terms than to miss important matches.
+
+        ### OUTPUT REQUIREMENTS
+        - Return a complete, valid JSON object matching the schema
+        - Use snake_case for all keys
+        - Fill all relevant fields, using null for truly inapplicable ones
+        - DON'T INCLUDE any COMMENTARY or EXPLANATION outside the JSON
 
         **Target JSON Schema:**
         ```json
         {QUERY_SCHEMA_DEFINITION}
+        ```
     """
     
     user_prompt = f"""
-        Analyze the following user query and generate the structured JSON output according to the instructions and schema provided in the system prompt. Ensure all keys in the output JSON use snake_case.
+        Analyze the following user query based strictly on the detailed instructions and schema in the system prompt. Perform decomposition, refinement, and expansion as requested. Ensure all keys are snake_case.
 
         User Query: "{user_query}"
     """
 
-    # --- LLM Call and Validation Logic (Remains the same as previous version) ---
+    # --- LLM Call and Validation Logic ---
     raw_json_output = None
     for attempt in range(MAX_RETRIES):
         logging.info(f"LLM API call attempt {attempt + 1}/{MAX_RETRIES}")
@@ -140,7 +220,6 @@ def process_query(
     logging.error("Failed to process query after all retries.")
     return None
 
-
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Process a natural language query into a structured format using an LLM.")
     parser.add_argument("query", help="The natural language query string to process.")
@@ -152,26 +231,28 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     # Load API Key
-api_key = load_openai_key()
-if not api_key:
-    exit(1)
+    api_key = load_openai_key()
+    if not api_key:
+        exit(1)
 
-# Initialize OpenAI Client
-try:
-    client = OpenAI(api_key=api_key, timeout=60.0) # Adjust timeout if needed
-except Exception as e:
-     logging.error(f"Failed to initialize OpenAI client: {e}")
-     exit(1)
+    # Initialize OpenAI Client
+    try:
+        client = OpenAI(api_key=api_key, timeout=60.0) # Adjust timeout if needed
+    except Exception as e:
+        logging.error(f"Failed to initialize OpenAI client: {e}")
+        exit(1)
 
-# Process the query
-structured_query_result = process_query(args.query, client, model=args.model)
+    # Process the query
+    structured_query_result = process_query(args.query, client, model=args.model)
 
-# Print the result
-if structured_query_result:
-    print("\n--- Structured Query Result ---")
-    # Use model_dump_json for clean Pydantic output
-    print(structured_query_result.model_dump_json(indent=2))
-    print("-----------------------------\n")
-else:
-    print("\n--- Query processing failed. ---")
-    exit(1)
+    # Print the result
+    if structured_query_result:
+        print("\n--- Structured Query Result ---")
+        # Use model_dump_json for clean Pydantic output
+        print(structured_query_result.model_dump_json(indent=2))
+        print("-----------------------------\n")
+    else:
+        print("\n--- Query processing failed. ---")
+        exit(1)
+
+# ----- END OF COMPLETE UPDATED CODE BLOCK -----

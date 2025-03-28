@@ -1,12 +1,12 @@
-# src/models.py (Updated for Step 1 & Step 3)
+# src/models.py (Enhanced for Professional Networking Query Processing)
 # ----- START OF COMPLETE UPDATED CODE BLOCK -----
 
 from pydantic import BaseModel, Field, validator, field_validator
-from typing import List, Optional, Dict, Any, Union # Ensure all needed types are imported
+from typing import List, Optional, Dict, Any, Union, cast # Ensure all needed types are imported
 import datetime
 import re # Needed for new QueryFilters validator
 
-# --- Reusable Date Handling (Your version) ---
+# --- Reusable Date Handling ---
 def normalize_date_string(date_str: Optional[str]) -> Optional[str]:
     if not date_str or date_str.lower() == 'present':
         return date_str
@@ -32,7 +32,7 @@ def normalize_date_string(date_str: Optional[str]) -> Optional[str]:
          pass
     return date_str
 
-# --- Nested Models for Resume Parsing (Your version) ---
+# --- Nested Models for Resume Parsing ---
 
 class ContactInformation(BaseModel):
     name: Optional[str] = None
@@ -63,7 +63,7 @@ class WorkExperience(BaseModel):
 class Education(BaseModel):
     institution: Optional[str] = None
     degree: Optional[str] = None
-    field_of_study: Optional[str] = None # Your version (no alias)
+    field_of_study: Optional[str] = None
     location: Optional[str] = None
     start_date: Optional[str] = None
     end_date: Optional[str] = None
@@ -87,9 +87,9 @@ class Skills(BaseModel):
 class Project(BaseModel):
     name: Optional[str] = None
     description: Optional[str] = None
-    technologies_used: List[str] = Field(default_factory=list) # Your version (no alias)
+    technologies_used: List[str] = Field(default_factory=list)
     url: Optional[str] = None
-    associated_experience: Optional[str] = None # Your version (no alias)
+    associated_experience: Optional[str] = None
 
 class AwardRecognition(BaseModel):
     title: Optional[str] = None
@@ -107,9 +107,9 @@ class AwardRecognition(BaseModel):
 class Publication(BaseModel):
     title: Optional[str] = None
     authors: List[str] = Field(default_factory=list)
-    journal_or_conference: Optional[str] = None # Your version (no alias)
+    journal_or_conference: Optional[str] = None
     date: Optional[str] = None
-    url_or_doi: Optional[str] = None # Your version (no alias)
+    url_or_doi: Optional[str] = None
 
     @field_validator('date', mode='before')
     @classmethod
@@ -133,11 +133,11 @@ class VolunteerExperience(BaseModel):
         return value
 
 class ParsingMetadata(BaseModel):
-    model_used: Optional[str] = None # Your version (no alias)
-    timestamp_utc: Optional[str] = None # Your version (no alias)
-    processing_time_seconds: Optional[float] = None # Your version (no alias)
+    model_used: Optional[str] = None
+    timestamp_utc: Optional[str] = None
+    processing_time_seconds: Optional[float] = None
 
-# --- Main Resume Model (Your version) ---
+# --- Main Resume Model ---
 
 class ParsedResume(BaseModel):
     schema_version: Optional[str] = None
@@ -163,11 +163,53 @@ class ParsedResume(BaseModel):
     class Config:
         extra = 'allow'
 
-# --- NEW: Pydantic Models for Structured Query Output (Step 3) ---
-# --- Using snake_case consistently ---
+# --- Enhanced Models for Structured Query Output ---
+
+class ProfessionalConceptExpansions(BaseModel):
+    """Detailed expansions of professional concepts by category."""
+    skills: Optional[List[str]] = Field(default_factory=list)
+    roles: Optional[List[str]] = Field(default_factory=list)
+    industries: Optional[List[str]] = Field(default_factory=list)
+    company_types: Optional[List[str]] = Field(default_factory=list)
+    technologies: Optional[List[str]] = Field(default_factory=list)
+    achievements: Optional[List[str]] = Field(default_factory=list)
+    certifications: Optional[List[str]] = Field(default_factory=list)
+
+    class Config: extra = 'allow'
+
+    @field_validator('*', mode='before')
+    @classmethod
+    def clean_string_list(cls, value: Any) -> List[str]:
+        if isinstance(value, list): 
+            return [str(item).strip() for item in value if isinstance(item, (str, int, float)) and str(item).strip()]
+        elif isinstance(value, str) and value.strip(): 
+            return [item.strip() for item in re.split(r'[;,]', value) if item.strip()]
+        return []
+
+class ConfidenceMetrics(BaseModel):
+    """Confidence metrics for query understanding."""
+    overall: Optional[float] = None
+    ambiguity_level: Optional[str] = None
+    ambiguity_reason: Optional[str] = None
+    
+    @field_validator('overall', mode='before')
+    @classmethod
+    def validate_overall(cls, value):
+        if isinstance(value, list) and not value:
+            return None
+        return value
+        
+    @field_validator('ambiguity_level', 'ambiguity_reason', mode='before')
+    @classmethod
+    def validate_string_fields(cls, value):
+        if isinstance(value, list) and not value:
+            return None
+        if isinstance(value, str):
+            return value.strip() or None
+        return value
 
 class QueryFilters(BaseModel):
-    """Defines the structure for extracted filters from user queries."""
+    """Extracted structured filters."""
     location: Optional[List[str]] = Field(default_factory=list)
     company_name: Optional[List[str]] = Field(default_factory=list)
     job_title: Optional[List[str]] = Field(default_factory=list)
@@ -175,39 +217,100 @@ class QueryFilters(BaseModel):
     skills: Optional[List[str]] = Field(default_factory=list)
     min_experience_years: Optional[int] = None
     max_experience_years: Optional[int] = None
-    keywords: Optional[List[str]] = Field(default_factory=list, description="Catch-all for non-specific concepts, transition elements, project types, etc.")
+    keywords: Optional[List[str]] = Field(default_factory=list, description="Keywords explicitly mentioned or inferred from context.")
     currently_working_at: Optional[str] = None
     previously_worked_at: Optional[str] = None
     founded_company: Optional[bool] = None
     open_to_consulting: Optional[bool] = None
-    network_relation: Optional[str] = Field(None, description="e.g., 'my_network', 'alumni'")
-    role_seniority: Optional[List[str]] = Field(default_factory=list, description="e.g., 'senior', 'junior', 'lead', 'VP', 'principal', 'entry-level'") # <-- NEW FIELD
+    network_relation: Optional[str] = None
+    role_seniority: Optional[List[str]] = Field(default_factory=list)
+    # New filter fields
+    career_stage: Optional[List[str]] = Field(default_factory=list)
+    project_types: Optional[List[str]] = Field(default_factory=list)
+    educational_background: Optional[List[str]] = Field(default_factory=list)
+    interests: Optional[List[str]] = Field(default_factory=list)
+    availability: Optional[str] = None
 
-    class Config:
-        extra = 'allow'
+    class Config: extra = 'allow'
 
-    @field_validator('skills', 'keywords', 'location', 'company_name', 'job_title', 'industry', 'role_seniority', mode='before') # Added role_seniority
+    # Validators for list fields
+    @field_validator('location', 'company_name', 'job_title', 'industry', 'skills', 
+                    'keywords', 'role_seniority', 'career_stage', 'project_types', 
+                    'educational_background', 'interests', mode='before')
     @classmethod
     def clean_string_list(cls, value: Any) -> List[str]:
-        """Cleans list fields: ensures strings, strips whitespace, handles single string input."""
-        if isinstance(value, list):
+        if value is None:
+            return []
+        if isinstance(value, list): 
             return [str(item).strip() for item in value if isinstance(item, (str, int, float)) and str(item).strip()]
-        elif isinstance(value, str) and value.strip():
-            items = re.split(r'[;,]', value)
-            return [item.strip() for item in items if item.strip()]
+        elif isinstance(value, str) and value.strip(): 
+            return [item.strip() for item in re.split(r'[;,]', value) if item.strip()]
         return []
+    
+    # Validators for scalar fields that might receive empty lists
+    @field_validator('min_experience_years', 'max_experience_years', mode='before')
+    @classmethod
+    def clean_integer_field(cls, value: Any) -> Optional[int]:
+        if isinstance(value, list) and not value:
+            return None
+        if isinstance(value, int):
+            return value
+        if isinstance(value, str) and value.strip():
+            try:
+                return int(value.strip())
+            except ValueError:
+                return None
+        return None
+    
+    @field_validator('currently_working_at', 'previously_worked_at', 'network_relation', 'availability', mode='before')
+    @classmethod
+    def clean_string_field(cls, value: Any) -> Optional[str]:
+        if isinstance(value, list) and not value:
+            return None
+        if isinstance(value, str):
+            return value.strip() or None
+        return None
+    
+    @field_validator('founded_company', 'open_to_consulting', mode='before')
+    @classmethod
+    def clean_boolean_field(cls, value: Any) -> Optional[bool]:
+        if isinstance(value, list) and not value:
+            return None
+        if isinstance(value, bool):
+            return value
+        if isinstance(value, str) and value.strip().lower() in ('true', 'yes', '1'):
+            return True
+        if isinstance(value, str) and value.strip().lower() in ('false', 'no', '0'):
+            return False
+        return None
 
 class StructuredQuery(BaseModel):
-    """The final structured representation of the user's query after LLM processing."""
+    """Structured representation including LLM refinements and expansions."""
+    original_query: Optional[str] = Field(None, description="The raw query entered by the user.")
     semantic_query: Optional[str] = Field(None, description="Core meaning for vector search.")
+    refined_semantic_query: Optional[str] = Field(None, description="LLM-generated alternative semantic query if original is vague.")
     filters: QueryFilters = Field(default_factory=QueryFilters, description="Structured filters extracted.")
+    expanded_keywords: Optional[List[str]] = Field(default_factory=list, description="LLM-generated synonyms, related terms, category examples.")
+    # New fields for enhanced understanding
+    professional_concept_expansions: ProfessionalConceptExpansions = Field(default_factory=ProfessionalConceptExpansions, 
+                                                                          description="Domain-specific concept expansions.")
+    implicit_needs: Optional[List[str]] = Field(default_factory=list, description="Unstated but implied requirements.")
     query_type: Optional[str] = Field(None, description="Classification of query intent.")
+    confidence: Optional[ConfidenceMetrics] = Field(default_factory=ConfidenceMetrics, description="Confidence metrics for query understanding.")
 
-    @field_validator('semantic_query', mode='before')
+    @field_validator('semantic_query', 'refined_semantic_query', 'query_type', mode='before')
     @classmethod
-    def clean_semantic_query(cls, value: Any) -> Optional[str]:
-        if isinstance(value, str):
-            cleaned = value.strip(); return cleaned if cleaned else None
+    def clean_optional_string(cls, value: Any) -> Optional[str]:
+        if isinstance(value, list) and not value:
+            return None
+        if isinstance(value, str): 
+            cleaned = value.strip()
+            return cleaned if cleaned else None
         return None
+
+    @field_validator('expanded_keywords', 'implicit_needs', mode='before')
+    @classmethod
+    def clean_string_list(cls, value: Any) -> List[str]:
+        return QueryFilters.clean_string_list(value)
 
 # ----- END OF COMPLETE UPDATED CODE BLOCK -----

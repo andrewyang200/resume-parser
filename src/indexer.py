@@ -40,7 +40,7 @@ def chunk_text(text: str, min_length: int = MIN_CHUNK_LENGTH) -> List[str]:
     return meaningful_chunks
 
 # --- Main Indexing Function (Loop variable renamed) ---
-def run_indexing(rebuild_indexes: bool = False, clear_all: bool = False):
+def run_indexing(rebuild_indexes: bool = False, clear_all: bool = False, rebuild_fts: bool = False):
     """Fetches data, generates embeddings, and stores them in PostgreSQL."""
     logging.info("--- Starting Indexing Process ---")
     start_time = time.time()
@@ -57,10 +57,10 @@ def run_indexing(rebuild_indexes: bool = False, clear_all: bool = False):
             raise ConnectionError("Failed to get DB connection.")
 
         # Optionally set up tables and base indexes (usually done once)
-        if rebuild_indexes:
-            logging.info("Setting up database tables and indexes...")
-            # Pass the main connection, setup_indexing handles transactions internally now
-            database.setup_indexing(db_conn, EMBEDDING_DIMENSION)
+        if rebuild_indexes or rebuild_fts: # Check either flag
+            logging.info("Setting up database tables and indexes (incl. FTS if requested)...")
+            # Pass the rebuild_fts flag to setup_indexing
+            database.setup_indexing(db_conn, EMBEDDING_DIMENSION, rebuild_fts=rebuild_fts)
         else:
             logging.info("Skipping index/table setup (use --rebuild to force).")
 
@@ -157,20 +157,30 @@ def run_indexing(rebuild_indexes: bool = False, clear_all: bool = False):
     end_time = time.time()
     logging.info(f"--- Indexing Process Completed in {end_time - start_time:.2f}s ---")
 
-
+# --- Main Execution Logic for Testing ---
 if __name__ == "__main__":
+    # --- FIX: Replace ... with actual arguments ---
     parser = argparse.ArgumentParser(description="Generate and store text embeddings for resume data.")
     parser.add_argument(
         "--rebuild",
         action="store_true",
-        help="Force creation/recreation of tables and indexes (use with caution)."
+        help="Force creation/recreation of vector tables and indexes (use with caution)." # Clarified help text
     )
     parser.add_argument(
         "--clear",
         action="store_true",
         help="Delete all existing chunks before indexing (use with caution)."
     )
+    # --- End Fix ---
 
+    # --- ADD THIS (from previous step, KEEP THIS) ---
+    parser.add_argument(
+        "--rebuild_fts",
+        action="store_true",
+        help="Force setup/re-setup of FTS columns, triggers, and indexes (Run once or if schema changes)."
+    )
+    # --- END ADD ---
     args = parser.parse_args()
 
-    run_indexing(rebuild_indexes=args.rebuild, clear_all=args.clear)
+    # Modify the call to run_indexing (KEEP THIS)
+    run_indexing(rebuild_indexes=args.rebuild, clear_all=args.clear, rebuild_fts=args.rebuild_fts)
